@@ -30,11 +30,11 @@ using namespace std;
 //using namespace std;
 //extern double lap(int dim, double **assigncost,
 //               int *rowsol, int *colsol, double *u, double *v);
-extern double lap(int dim, std::vector< std::vector<double> >& assigncost,
-                  int *rowsol, int *colsol, double *u, double *v);
-
 //extern double lap(int dim, std::vector< std::vector<double> >& assigncost,
-//                  vector<int>& rowsol, vector<int>& colsol, vector<double>& u, vector<double>& v);
+//                  int *rowsol, int *colsol, double *u, double *v);
+
+extern double lap(int dim, std::vector< std::vector<double> >& assigncost,
+                  vector<int>& rowsol, vector<int>& colsol, vector<double>& u, vector<double>& v);
 
 //extern void checklap(int dim, double **assigncost,
 //                     int *rowsol, int *colsol, double *u, double *v);

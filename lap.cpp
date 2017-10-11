@@ -29,20 +29,20 @@
 #include <vector>
 using namespace std;
 
-double lap(int dim,
-        vector< vector<double> >& assigncost,
-        col *rowsol,
-        row *colsol,
-        cost *u,
-        cost *v)
-
-
 //double lap(int dim,
 //        vector< vector<double> >& assigncost,
-//        vector<col>& rowsol,
-//        vector<row>& colsol,
-//        vector<cost>& u,
-//        vector<cost>& v)
+//        col *rowsol,
+//        row *colsol,
+//        cost *u,
+//        cost *v)
+
+
+double lap(int dim,
+        vector< vector<double> >& assigncost,
+        vector<col>& rowsol,
+        vector<row>& colsol,
+        vector<cost>& u,
+        vector<cost>& v)
 
 
 // input:
@@ -57,15 +57,28 @@ double lap(int dim,
 
 {
   boolean unassignedfound;
-  row  i, imin, numfree = 0, prvnumfree, f, i0, k, freerow, *pred, *free;
-  col  j, j1, j2, endofpath, last, low, up, *collist, *matches;
-  cost min, h, umin, usubmin, v2, *d;
+  row  i, imin, numfree = 0, prvnumfree, f, i0, k, freerow; //, *pred, *free;
+  col  j, j1, j2, endofpath, last, low, up;// *collist, *matches;
+  cost min, h, umin, usubmin, v2;// *d;
 
-  free = new row[dim];       // list of unassigned rows.
-  collist = new col[dim];    // list of columns to be scanned in various ways.
-  matches = new col[dim];    // counts how many times a row could be assigned.
-  d = new cost[dim];         // 'cost-distance' in augmenting path calculation.
-  pred = new row[dim];       // row-predecessor of column in augmenting/alternating path.
+  vector<row> pred, free;
+  vector<cost> d;
+  vector<col> collist, matches;
+
+//  free = new row[dim];       // list of unassigned rows.
+//  collist = new col[dim];    // list of columns to be scanned in various ways.
+//  matches = new col[dim];    // counts how many times a row could be assigned.
+//  d = new cost[dim];         // 'cost-distance' in augmenting path calculation.
+//  pred = new row[dim];       // row-predecessor of column in augmenting/alternating path.
+
+  for(int i = 0 ; i < dim ; ++i)
+  {
+      free.push_back(0);
+      collist.push_back(0);
+      matches.push_back(0);
+      d.push_back(0);
+      pred.push_back(0);
+  }
 
   // init how many times a row will be assigned in the column reduction.
   for (i = 0; i < dim; i++)  
@@ -300,11 +313,11 @@ double lap(int dim,
   }
 
   // free reserved memory.
-  delete[] pred;
-  delete[] free;
-  delete[] collist;
-  delete[] matches;
-  delete[] d;
+//  delete[] pred;
+//  delete[] free;
+//  delete[] collist;
+//  delete[] matches;
+//  delete[] d;
 
   return lapcost;
 }

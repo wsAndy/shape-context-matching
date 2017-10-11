@@ -33,6 +33,8 @@ double dist(Point& p1, Point& p2)
 	return sqrt((p2.x - p1.x)*(p2.x - p1.x) + (p2.y - p1.y)*(p2.y - p1.y));
 }
 
+
+/*
 void makeImage(int **hist, int csize)
 {
 	for (int i=0; i<csize; i++)
@@ -109,6 +111,8 @@ void makeImage(int **hist, int csize)
 
 	return;
 }
+
+*/
 
 double angle(Point& p1, Point& p2)
 {
@@ -268,7 +272,9 @@ void cleanup(int **hist1, int size1, int **hist2, int size2)
 }
 
 //void getChiStatistic(double **stats, int **histogram1, int size1, int **histogram2, int size2)
-void getChiStatistic(vector< vector<double> >& stats,  vector< vector<int> >& histogram1, int size1, vector< vector<int> >& histogram2, int size2)
+void getChiStatistic(vector< vector<double> >& stats,
+                     vector< vector<int> >& histogram1, int size1,
+                     vector< vector<int> >& histogram2, int size2)
 {
 	int size = max(size1, size2);
 
@@ -360,17 +366,17 @@ int main(int argc, char **argv)
     cvtColor(img1,img1,CV_RGB2GRAY);
     cvtColor(img2,img2,CV_RGB2GRAY);
     Mat edge1,edge2;
-    Canny(img1,edge1,110,130,3);
-    Canny(img2,edge2,110,130,3);
+    Canny(img1,edge1,40,120,3);
+    Canny(img2,edge2,40,120,3);
     int rows = img1.rows;
     int cols = img1.cols;
 
-    threshold(edge1,edge1,50,255,CV_THRESH_BINARY);
-    threshold(edge2,edge2,50,255,CV_THRESH_BINARY);
+    threshold(edge1,edge1,40,255,CV_THRESH_BINARY);
+    threshold(edge2,edge2,40,255,CV_THRESH_BINARY);
 
-    imshow("ed1",edge1);
-    imshow("ed2",edge2);
-    waitKey(0);
+//    imshow("ed1",edge1);
+//    imshow("ed2",edge2);
+//    waitKey(0);
 
 
     vector <Point> contourPts1; // = getContourPtsFromFile(argv[1]);
@@ -394,8 +400,8 @@ int main(int argc, char **argv)
         }
     }
 
-    contourPts1 = getSampledPoints(contourPts1,5);
-    contourPts2 = getSampledPoints(contourPts2,5);
+    contourPts1 = getSampledPoints(contourPts1,10);
+    contourPts2 = getSampledPoints(contourPts2,10);
 
 
 //    imshow("sh1",sh);
@@ -431,14 +437,6 @@ int main(int argc, char **argv)
 
 	int size = max(size1, size2);
 
-//	chiStatistics = (double **) malloc(sizeof(double *) * size);
-//	for (int i=0; i<size; i++)
-//	{
-//		chiStatistics[i] = (double *) malloc(sizeof(double) * size);
-//		for (int j=0; j<size; j++)
-//			chiStatistics[i][j] = -1.0;
-//	}
-
     for(int i = 0; i < size; ++i)
     {
         vector<double> tmp;
@@ -450,27 +448,25 @@ int main(int argc, char **argv)
     }
 
 
-    cout << "getCih" <<endl;
 	getChiStatistic(chiStatistics, histogram1, size1, histogram2, size2);
-cout << "getCih" <<endl;
 
-    double *u, *v;
-    int *colsol, *rowsol;
+//    double *u, *v;
+//    int *colsol, *rowsol;
 
-    rowsol = (int *) malloc(sizeof(int) * size);
-    colsol = (int *) malloc(sizeof(int) * size);
-    u = (double *) malloc(sizeof(double) * size);
-    v = (double *) malloc(sizeof(double) * size);
+//    rowsol = (int *) malloc(sizeof(int) * size);
+//    colsol = (int *) malloc(sizeof(int) * size);
+//    u = (double *) malloc(sizeof(double) * size);
+//    v = (double *) malloc(sizeof(double) * size);
 
-//        vector<double> u,v;
-//        vector<int> colsol,rowsol;
-//    for(int i = 0; i < size; ++i)
-//    {
-//        u.push_back(0);
-//        v.push_back(0);
-//        rowsol.push_back(0);
-//        colsol.push_back(0);
-//    }
+    vector<double> u,v;
+    vector<int> colsol,rowsol;
+    for(int i = 0; i < size; ++i)
+    {
+        u.push_back(0);
+        v.push_back(0);
+        rowsol.push_back(0);
+        colsol.push_back(0);
+    }
 
 
 
@@ -482,17 +478,12 @@ cout << "getCih" <<endl;
 
 	cout << "time taken :: " << (t2.tv_sec - t1.tv_sec) + (t2.tv_usec - t1.tv_usec) / 1000000.0 << " s" << endl;
 
-//	cleanup(histogram1, size1, histogram2, size2);
-
-//	for (int i=0; i<size; i++) free(chiStatistics[i]);
-//	free(chiStatistics);
-
 
     double max_dist = -1, min_dist = 1000;
 
-	Mat resimg = Mat::zeros(sizey, sizex, CV_8UC3);
-    Mat resimg2 = Mat::zeros(sizey, sizex, CV_8UC3);
-	int count = 0;
+//	Mat resimg = Mat::zeros(sizey, sizex, CV_8UC3);
+//    Mat resimg2 = Mat::zeros(sizey, sizex, CV_8UC3);
+//	int count = 0;
 	for (int i=0; i<size; i++)
 	{
 		int j = rowsol[i];
@@ -512,14 +503,16 @@ cout << "getCih" <<endl;
             min_dist = tmp_dist;
         }
 
-		if (count % 4 == 0)
-		{
-			circle(resimg, p1, 1, RED, 4, 8);
-			circle(resimg, p2, 1, BLUE, 4, 8);
-            line(resimg, p1, p2, WHITE, 0.2, 8);
-		}
-		count = count + 1;
+//		if (count % 4 == 0)
+//		{
+//			circle(resimg, p1, 1, RED, 4, 8);
+//			circle(resimg, p2, 1, BLUE, 4, 8);
+//            line(resimg, p1, p2, WHITE, 0.2, 8);
+//		}
+//		count = count + 1;
 	}
+
+
 
     vector<int> link1,link2;
     for(int i = 0; i < size; ++i)
@@ -540,28 +533,31 @@ cout << "getCih" <<endl;
         }
     }
 
-    for(int i = 0; i < link1.size() ; ++i )
-    {
-
-        Point p1 = contourPts1[ link1[i] ];
-        Point p2 = contourPts2[ link2[i] ];
-        circle(resimg2, p1, 1, RED, 4, 8);
-        circle(resimg2, p2, 1, BLUE, 4, 8);
-        line(resimg2, p1, p2, WHITE, 0.2, 8);
-    }
 
 
 
-    free(colsol); free(rowsol);
-    free(u); free(v);
+//    for(int i = 0; i < link1.size() ; ++i )
+//    {
+
+//        Point p1 = contourPts1[ link1[i] ];
+//        Point p2 = contourPts2[ link2[i] ];
+//        circle(resimg2, p1, 1, RED, 4, 8);
+//        circle(resimg2, p2, 1, BLUE, 4, 8);
+//        line(resimg2, p1, p2, WHITE, 0.2, 8);
+//    }
 
 
-    imshow("mapping", resimg);
-    imshow("map_clear",resimg2);
 
-    imwrite("./matching.jpg", resimg);
-    imwrite("./match_clear.jpg", resimg2);
-    waitKey(0);
+//    free(colsol); free(rowsol);
+//    free(u); free(v);
+
+
+//    imshow("mapping", resimg);
+//    imshow("map_clear",resimg2);
+
+//    imwrite("./matching.jpg", resimg);
+//    imwrite("./match_clear.jpg", resimg2);
+//    waitKey(0);
 
 	return 0;
 }
